@@ -42,33 +42,8 @@ type Store = {
   hydrated: boolean;
 };
 
-const defaultNotes: Note[] = [
-  {
-    id: "n1", title: "Why clients go quiet after a quote", type: "idea", tags: ["instagram","clients"], pinned: true, archived: false, deletedAt: null, createdAt: new Date(Date.now()-1000*60*60*5).toISOString(), updatedAt: new Date(Date.now()-1000*60*60*5).toISOString(),
-    entries: [
-      { id:"e1", noteId:"n1", kind:"text", body:"Three reasons I keep seeing: unclear scope, no next step, and a price shown before the value. A carousel could work through each one.", createdAt: new Date(Date.now()-1000*60*60*5).toISOString() },
-      { id:"e1v", noteId:"n1", kind:"voice", body:"Voice note: anchoring in psychology — the first number frames the rest. So put price at the end, lead with outcome.", createdAt: new Date(Date.now()-1000*60*60*2).toISOString(), audioPath:"/audio/mock1.mp3", audioDurationSec: 48, transcriptStatus:"done" }
-    ]
-  },
-  {
-    id: "n2", title: "Brand board export — Tide / Amber balance", type: "design", tags: ["design","system"], pinned: false, archived: false, deletedAt: null, createdAt: new Date(Date.now()-1000*60*60*26).toISOString(), updatedAt: new Date(Date.now()-1000*60*60*26).toISOString(),
-    entries: [
-      { id:"e2", noteId:"n2", kind:"text", body:"Keep surfaces calm: 74% neutral, 16% Tide, 10% Amber. Amber only where action is needed — record, reminder, Today.", createdAt: new Date(Date.now()-1000*60*60*26).toISOString() },
-    ]
-  },
-  {
-    id: "n3", title: "Psychology meets design — anchoring", type: "write-up", tags: ["psychology","pricing"], pinned: false, archived: false, deletedAt: null, createdAt: new Date(Date.now()-1000*60*60*50).toISOString(), updatedAt: new Date(Date.now()-1000*60*60*50).toISOString(),
-    entries: [
-      { id:"e3", noteId:"n3", kind:"voice", body:"Class yesterday: anchoring bias. First number frames the rest.", createdAt: new Date(Date.now()-1000*60*60*50).toISOString(), audioPath:"/audio/mock2.mp3", audioDurationSec: 32, transcriptStatus:"done" } as any,
-    ]
-  },
-];
-
-const defaultTodos: Todo[] = [
-  { id:"t1", title:"Send invoice to the Lekki client", notes:"Repeats monthly", dueAt: new Date(Date.now()+1000*60*60*3).toISOString(), remindAt:[new Date(Date.now()+1000*60*60*3).toISOString()], priority:"high", status:"open", repeat:"monthly" as any, createdAt: new Date().toISOString() },
-  { id:"t2", title:"Draft LinkedIn post for Monday", dueAt: new Date(Date.now()+1000*60*60*24*1.5).toISOString(), remindAt:[new Date(Date.now()+1000*60*60*24*1.5).toISOString()], priority:"med", status:"open", repeat:"none", createdAt: new Date().toISOString() },
-  { id:"t3", title:"Export the brand board", notes:"Send to client for review", dueAt: new Date(Date.now()-1000*60*60*5).toISOString(), remindAt:[], priority:"low", status:"done", completedAt: new Date(Date.now()-1000*60*60*4).toISOString(), createdAt: new Date().toISOString() },
-];
+const defaultNotes: Note[] = [];
+const defaultTodos: Todo[] = [];
 
 const defaultVoiceProfile: VoiceProfile = {
   answers: {
@@ -118,15 +93,18 @@ export function StoreProvider({ children }: { children: React.ReactNode }){
   const [search, setSearch] = useState("");
   const [hydrated, setHydrated] = useState(false);
 
-  // hydrate from localStorage
+  // hydrate from localStorage — v2 has no demo notes/todos
   useEffect(()=>{
     try {
-      const raw = localStorage.getItem("hub-station-v1");
+      const rawV2 = localStorage.getItem("hub-station-v2");
+      const raw = rawV2 || localStorage.getItem("hub-station-v1");
+      const TEMPLATE_NOTE_IDS = new Set(["n1","n2","n3"]);
+      const TEMPLATE_TODO_IDS = new Set(["t1","t2","t3"]);
       if(raw){
         const parsed = JSON.parse(raw);
-        if(parsed.notes) setNotes(parsed.notes);
+        if(parsed.notes) setNotes(parsed.notes.filter((n: any)=> !TEMPLATE_NOTE_IDS.has(n.id)));
         if(parsed.drafts) setDrafts(parsed.drafts);
-        if(parsed.todos) setTodos(parsed.todos);
+        if(parsed.todos) setTodos(parsed.todos.filter((t: any)=> !TEMPLATE_TODO_IDS.has(t.id)));
         if(parsed.voiceProfile) setVP(parsed.voiceProfile);
         if(parsed.linkedinCalendar) setLC(parsed.linkedinCalendar);
         if(parsed.instagramCalendar) setIC(parsed.instagramCalendar);
@@ -135,6 +113,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }){
         if(parsed.ideas) setIdeas(parsed.ideas);
         if(parsed.privateProfile) setPrivateProfile(parsed.privateProfile);
         if(parsed.privateMessages) setPrivateMessages(parsed.privateMessages);
+        // migrate old key to new so templates don't return
+        if(!rawV2 && raw) {
+          try { localStorage.removeItem("hub-station-v1"); } catch {}
+        }
       } else {
         // seed calendars
         setLC(mockYearlyCalendar("linkedin").slice(0,30));
@@ -147,7 +129,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }){
   useEffect(()=>{
     if(!hydrated) return;
     const payload = { notes, drafts, todos, voiceProfile, linkedinCalendar, instagramCalendar, blogPosts, snippets, ideas, privateProfile, privateMessages };
-    localStorage.setItem("hub-station-v1", JSON.stringify(payload));
+    localStorage.setItem("hub-station-v2", JSON.stringify(payload));
   }, [notes,drafts,todos,voiceProfile,linkedinCalendar,instagramCalendar,blogPosts,snippets,ideas,privateProfile,privateMessages,hydrated]);
 
   const addNote = (n:Note)=> setNotes(s=>[n, ...s]);
