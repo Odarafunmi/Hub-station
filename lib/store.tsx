@@ -76,43 +76,33 @@ export function StoreProvider({ children }: { children: React.ReactNode }){
     goals: "Inquiries + authority",
     monthlyFocus: "Clarity in proposals"
   });
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([
-    { id:"b1", title:"Designing the decision, not just the deliverable", slug:"designing-the-decision", body:"## The quiet after a quote\n\nIt's rarely about price. It's about structure.\n\n### Fix in one page\n\nList what is included, what is not, and the next step. Put price last. Watch response rates change.", excerpt:"Why proposal structure beats polishing the logo.", category:"Process", tags:["proposals","pricing"], status:"published", publishedAt: new Date(Date.now()-1000*60*60*24*7).toISOString(), createdAt: new Date(Date.now()-1000*60*60*24*8).toISOString(), coverUrl:"https://images.unsplash.com/photo-1499951360447-b19be2c0e1a8?w=800&q=80" }
-  ]);
-  const [snippets, setSnippets] = useState<Snippet[]>([
-    { id:"s1", title:"Proposal checklist", language:"markdown", body:"- Included\n- Not included\n- Next step\n- Price last", tags:["proposal"], createdAt: new Date().toISOString() }
-  ]);
-  const [ideas, setIdeas] = useState<IdeaCard[]>([
-    { id:"i1", title:"Carousel: anchoring in pricing", body:"Explain anchoring with before/after proposal order.", tags:["carousel","psychology"], createdAt: new Date().toISOString() },
-    { id:"i2", title:"Essay: why quiet is feedback", body:"Client silence is data about clarity.", tags:["writing"], createdAt: new Date().toISOString() },
-  ]);
-  const [privateProfile, setPrivateProfile] = useState<PrivateProfile>({ details:{ met:"At the gallery opening — you laughed at my nerdy kerning joke.", loves:"Handwritten notes, late drives, your tea ritual", dates:"Anniversary: 14 Feb, Birthday: 22 Aug"}, pinHash:"1234"});
-  const [privateMessages, setPrivateMessages] = useState<PrivateMessage[]>([
-    { id:"pm1", occasion:"morning", tone:"sweet", body:"Good morning, my favorite person —\n\nThinking of you and smiling. Thank you for being the calm I come home to.\n\nHere's to a gentle morning for you.\n\nYours, today and tomorrow. — U", createdAt: new Date(Date.now()-1000*60*60*24*2).toISOString(), favourite:true, sentAt: new Date(Date.now()-1000*60*60*24*2).toISOString() }
-  ]);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [snippets, setSnippets] = useState<Snippet[]>([]);
+  const [ideas, setIdeas] = useState<IdeaCard[]>([]);
+  const [privateProfile, setPrivateProfile] = useState<PrivateProfile>({ details:{ met:"", loves:"", dates:""}, pinHash:"1234"});
+  const [privateMessages, setPrivateMessages] = useState<PrivateMessage[]>([]);
   const [search, setSearch] = useState("");
   const [hydrated, setHydrated] = useState(false);
 
-  // hydrate from localStorage — v2 has no demo notes/todos
+  // hydrate from localStorage — v2 clean slate (no demo seeds)
   useEffect(()=>{
     try {
       const rawV2 = localStorage.getItem("hub-station-v2");
       const raw = rawV2 || localStorage.getItem("hub-station-v1");
-      const TEMPLATE_NOTE_IDS = new Set(["n1","n2","n3"]);
-      const TEMPLATE_TODO_IDS = new Set(["t1","t2","t3"]);
+      const TEMPLATE_IDS = new Set(["n1","n2","n3","t1","t2","t3","b1","s1","i1","i2","pm1"]);
       if(raw){
         const parsed = JSON.parse(raw);
-        if(parsed.notes) setNotes(parsed.notes.filter((n: any)=> !TEMPLATE_NOTE_IDS.has(n.id)));
+        if(parsed.notes) setNotes(parsed.notes.filter((n: any)=> !TEMPLATE_IDS.has(n.id)));
         if(parsed.drafts) setDrafts(parsed.drafts);
-        if(parsed.todos) setTodos(parsed.todos.filter((t: any)=> !TEMPLATE_TODO_IDS.has(t.id)));
+        if(parsed.todos) setTodos(parsed.todos.filter((t: any)=> !TEMPLATE_IDS.has(t.id)));
         if(parsed.voiceProfile) setVP(parsed.voiceProfile);
         if(parsed.linkedinCalendar) setLC(parsed.linkedinCalendar);
         if(parsed.instagramCalendar) setIC(parsed.instagramCalendar);
-        if(parsed.blogPosts) setBlogPosts(parsed.blogPosts);
-        if(parsed.snippets) setSnippets(parsed.snippets);
-        if(parsed.ideas) setIdeas(parsed.ideas);
+        if(parsed.blogPosts) setBlogPosts((parsed.blogPosts as any[]).filter(b=> !TEMPLATE_IDS.has(b.id)));
+        if(parsed.snippets) setSnippets((parsed.snippets as any[]).filter((s: any)=> !TEMPLATE_IDS.has(s.id)));
+        if(parsed.ideas) setIdeas((parsed.ideas as any[]).filter((x: any)=> !TEMPLATE_IDS.has(x.id)));
         if(parsed.privateProfile) setPrivateProfile(parsed.privateProfile);
-        if(parsed.privateMessages) setPrivateMessages(parsed.privateMessages);
+        if(parsed.privateMessages) setPrivateMessages((parsed.privateMessages as any[]).filter((m: any)=> !TEMPLATE_IDS.has(m.id)));
         // migrate old key to new so templates don't return
         if(!rawV2 && raw) {
           try { localStorage.removeItem("hub-station-v1"); } catch {}
