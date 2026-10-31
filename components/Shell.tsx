@@ -37,20 +37,17 @@ function ThemeToggle(){
 function BottomNav({ pathname }: { pathname:string }){
   return (
     <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 pointer-events-none" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
-      <div className="mx-3 mb-3 glass rounded-[28px] h-[64px] flex items-center justify-around px-2 pointer-events-auto" style={{ boxShadow: "0 8px 32px rgba(74,117,137,0.16)" }}>
+      <div className="mx-3 mb-3 glass rounded-[28px] h-[64px] flex items-center justify-around px-2 pointer-events-auto border border-white/40" style={{ boxShadow: "0 8px 32px rgba(74,117,137,0.16)" }}>
         {nav.slice(0,5).map(item=>{
           const active = pathname?.startsWith(item.href);
           return (
             <Link key={item.href} href={item.href} className="flex flex-col items-center gap-1 px-3 py-1.5 rounded-full">
-              <span className={`w-7 h-7 rounded-full grid place-items-center transition ${active ? "ring-1 ring-ink text-ink bg-surface" : "text-teal-mid/60"}`}>
+              <span className={`w-7 h-7 rounded-full grid place-items-center transition ${active ? "ring-1 ring-ink text-ink bg-surface shadow-sm" : "text-ink-muted hover:text-ink"}`} aria-label={item.label}>
                 <item.icon className="w-[18px] h-[18px]" />
               </span>
             </Link>
           );
         })}
-        <Link href="/todo" className="absolute -top-6 right-6 w-14 h-14 rounded-full bg-coral text-on-coral grid place-items-center shadow-fab pointer-events-auto" style={{ marginBottom:"env(safe-area-inset-bottom)" }}>
-          <Plus className="w-6 h-6" strokeWidth={2} />
-        </Link>
       </div>
     </nav>
   );
@@ -102,20 +99,20 @@ export default function Shell({ children }: { children: React.ReactNode }){
             <div className="px-6 pt-6 pb-4 flex items-center gap-3">
               <div className="flex-1">
                 <div className="text-[32px]/[40px] font-normal tracking-tight text-on-teal">Hub Station</div>
-                <div className="text-[12px] text-on-teal/70 mt-1 capitalize">{todayStr} · {mounted ? `${todayCount} tasks for today` : "—"} · Africa/Lagos</div>
+                <div className="text-[12px] text-on-teal mt-1 capitalize" style={{ color:"var(--on-teal)" }}>{todayStr} · {mounted ? `${todayCount} tasks for today` : "—"} · Africa/Lagos</div>
               </div>
               <ThemeToggle />
               <div className="hidden md:flex items-center gap-2 ml-2">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-teal/60" />
-                  <input value={search} onChange={e=> setSearch(e.target.value)} placeholder="Search…" className="h-9 pl-9 pr-3 rounded-full bg-white/15 border border-white/20 text-[14px] placeholder:text-on-teal/60 text-on-teal focus:outline-none focus:bg-white/20 w-[200px]" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-teal" style={{ color:"var(--on-teal)" }} />
+                  <input value={search} onChange={e=> setSearch(e.target.value)} placeholder="Search…" className="h-9 pl-9 pr-3 rounded-full bg-white text-[14px] placeholder:text-ink-muted text-ink border border-line focus:outline-none focus:border-teal w-[200px]" />
                 </div>
-                <button onClick={()=>{ if("Notification" in window) Notification.requestPermission(); }} className="w-9 h-9 rounded-full bg-white/15 border border-white/20 grid place-items-center text-on-teal"><Bell className="w-4 h-4"/></button>
+                <button onClick={()=>{ if("Notification" in window) Notification.requestPermission(); }} className="w-9 h-9 rounded-full bg-surface border border-line grid place-items-center text-ink"><Bell className="w-4 h-4"/></button>
               </div>
             </div>
             {/* Week strip — simplified calendar */}
             <div className="px-6 pb-5">
-              <div className="flex justify-between text-[12px] text-on-teal/70">
+              <div className="flex justify-between text-[12px] font-medium" style={{ color:"var(--on-teal)" }}>
                 {["M","T","W","T","F","S","S"].map(d=> <span key={d} className="w-10 text-center">{d}</span>)}
               </div>
               <div className="flex justify-between mt-2">
@@ -158,10 +155,7 @@ export default function Shell({ children }: { children: React.ReactNode }){
         </main>
 
         <BottomNav pathname={pathname || ""} />
-        {/* Desktop FAB */}
-        <Link href="/notes" className="hidden lg:grid fixed bottom-8 right-8 w-14 h-14 rounded-full bg-coral text-on-coral place-items-center shadow-fab z-30">
-          <Plus className="w-6 h-6" />
-        </Link>
+        {/* FAB is now owned by individual pages (To-do / Notes) to avoid duplicates */}
       </div>
     </div>
   );

@@ -140,7 +140,7 @@ export default function LinkedInPage(){
           {visible.map(slot=>(
             <div key={slot.id} className={`rounded-control border p-3 flex flex-col gap-2 ${slot.locked ? "bg-ink text-white border-ink" : "bg-white border-border"}`}>
               <div className="flex items-center gap-2 mono text-[11px] tracking-[0.08em] uppercase">
-                <span className={slot.locked?"text-white/70":"text-ink-muted"}>{slot.date} · {slot.postType}</span>
+                <span className={slot.locked?"text-white":"text-ink-muted"} style={slot.locked? {color:"#FFFFFF"}: {}}>{slot.date} · {slot.postType}</span>
                 <button onClick={()=> {
                   setLinkedinCalendar(linkedinCalendar.map(s=> s.id===slot.id ? {...s, locked: !s.locked}: s));
                 }} className={`ml-auto w-6 h-6 rounded-full grid place-items-center border ${slot.locked?"bg-white text-ink border-white":"bg-surface-2 text-ink-muted border-border"}`}>
@@ -148,7 +148,7 @@ export default function LinkedInPage(){
                 </button>
               </div>
               <div className={`font-medium text-[13px] leading-5 ${slot.locked?"text-white":"text-ink"}`}>{slot.topic}</div>
-              <div className={`text-[12px] ${slot.locked?"text-white/70":"text-ink-soft"}`}>{slot.angle}</div>
+              <div className={`text-[12px] ${slot.locked?"text-white":"text-ink-muted"}`} style={slot.locked? {color:"#FFFFFF"}: {}}>{slot.angle}</div>
               <div className="flex gap-1 mt-1">
                 <button onClick={()=> generateForSlot(slot)} className={`h-7 px-3 rounded-full text-[12px] font-medium inline-flex items-center gap-1 ${slot.locked?"bg-white text-ink":"bg-ink text-white"}`}>Generate</button>
                 <button onClick={()=>{

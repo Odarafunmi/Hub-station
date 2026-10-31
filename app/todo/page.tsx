@@ -63,17 +63,17 @@ export default function TodoPage(){
           transition={{ duration:0.45, ease:[0.22,1,0.36,1] }}
         >
           <button onClick={()=> setShowMissed(!showMissed)} className="w-full flex items-center justify-between px-6 h-[44px]">
-            <span className="text-[14px] font-medium">Missed Tasks</span>
-            <span className="flex items-center gap-2 text-[12px] text-on-teal/80">{lists.overdue.length} <motion.span animate={{ rotate: showMissed?180:0 }} transition={{ duration:0.28 }}><ChevronDown className="w-4 h-4"/></motion.span></span>
+            <span className="text-[14px] font-medium text-on-teal">Missed Tasks</span>
+            <span className="flex items-center gap-2 text-[12px] font-medium" style={{ color:"var(--on-teal)" }}>{lists.overdue.length} <motion.span animate={{ rotate: showMissed?180:0 }} transition={{ duration:0.28 }}><ChevronDown className="w-4 h-4"/></motion.span></span>
           </button>
           <AnimatePresence>
             {showMissed && (
               <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} className="px-4 pb-4 space-y-2">
-                {lists.overdue.length===0 ? <p className="text-[13px] text-on-teal/70 px-2">No missed tasks — calm.</p> :
+                {lists.overdue.length===0 ? <p className="text-[13px] px-2" style={{ color:"var(--on-teal)" }}>No missed tasks — calm.</p> :
                   lists.overdue.map(t=>(
-                    <motion.div key={t.id} initial={{ opacity:0, y:8 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.04 }} className="bg-white/10 rounded-[16px] px-4 py-3 flex items-center gap-3">
-                      <span className="text-[13px] text-on-teal flex-1">{t.title}</span>
-                      <span className="text-[12px] text-on-teal/60">{t.dueAt ? fmt(t.dueAt) : ""}</span>
+                    <motion.div key={t.id} initial={{ opacity:0, y:8 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.04 }} className="bg-white/15 rounded-[16px] px-4 py-3 flex items-center gap-3 border border-white/10">
+                      <span className="text-[13px] flex-1" style={{ color:"var(--on-teal)" }}>{t.title}</span>
+                      <span className="text-[12px]" style={{ color:"var(--on-teal)" }}>{t.dueAt ? fmt(t.dueAt) : ""}</span>
                       <button onClick={()=> updateTodo(t.id, x=> ({...x, status:"done"}))} className="w-8 h-8 rounded-full bg-surface text-teal grid place-items-center"><Check className="w-4 h-4"/></button>
                     </motion.div>
                   ))
@@ -178,7 +178,7 @@ export default function TodoPage(){
               <div className="px-6 pb-6 space-y-6">
                 <div>
                   <label className="text-[12px] text-ink-muted">Task title</label>
-                  <input value={title} onChange={e=> setTitle(e.target.value)} placeholder="e.g. Draft LinkedIn post" className="w-full mt-1 border-0 border-b border-line focus:border-coral outline-none py-2 text-[15px] bg-transparent placeholder:text-ink-muted/50" autoFocus />
+                  <input value={title} onChange={e=> setTitle(e.target.value)} placeholder="e.g. Draft LinkedIn post" className="w-full mt-1 border-0 border-b border-line focus:border-coral outline-none py-2 text-[15px] bg-transparent placeholder:text-ink-muted" style={{ color:"var(--ink)" }} autoFocus />
                 </div>
                 <div>
                   <label className="text-[12px] text-ink-muted">Due to</label>
@@ -216,19 +216,12 @@ export default function TodoPage(){
         )}
       </AnimatePresence>
 
-      {/* Floating Action Button (desktop handled by Shell, this is the mobile FAB) */}
-      <div className="lg:hidden fixed bottom-20 right-4 z-30">
-        <button onClick={()=> setShowAdd(true)} className="w-14 h-14 rounded-full bg-coral text-on-coral grid place-items-center shadow-fab">
-          <Plus className="w-6 h-6" />
-        </button>
-      </div>
-
-      {/* Desktop button */}
-      <div className="hidden lg:block">
-        <button onClick={()=> setShowAdd(true)} className="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-coral text-on-coral grid place-items-center shadow-fab z-30">
-          <Plus className="w-6 h-6"/>
-        </button>
-      </div>
+      {/* Single FAB — responsive placement, safely above bottom nav */}
+      <button onClick={()=> setShowAdd(true)} aria-label="Add Task" className="fixed z-30 w-14 h-14 rounded-full bg-coral text-on-coral grid place-items-center shadow-fab active:scale-[0.94] transition"
+        style={{ bottom: "calc(88px + env(safe-area-inset-bottom))", right: "16px" }}>
+        <Plus className="w-6 h-6" strokeWidth={2.2} />
+      </button>
+      <style>{`@media(min-width:1024px){ button[aria-label="Add Task"]{ bottom: 32px !important; right: 32px !important; } }`}</style>
     </div>
   );
 }

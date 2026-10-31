@@ -52,8 +52,8 @@ export default function InstagramPage(){
             <button key={p.key} onClick={()=> setSelectedPillar(selectedPillar===p.key ? null : p.key)} className={`rounded-card border p-4 text-left transition ${selectedPillar===p.key?"border-ink bg-ink text-white":"bg-white border-border hover:border-border-strong"}`}>
               <div className="w-2 h-2 rounded-full" style={{ background: p.color }} />
               <div className="font-display font-semibold text-[14px] mt-2">{p.label}</div>
-              <div className={`text-[12px] leading-4 mt-1 ${selectedPillar===p.key?"text-white/70":"text-ink-soft"}`}>{p.desc}</div>
-              <div className={`mono text-[10px] tracking-[0.08em] uppercase mt-3 px-2 py-1 rounded-full border inline-block ${selectedPillar===p.key?"border-white/20 text-white":"border-border bg-surface-2 text-ink-muted"}`}>Active</div>
+              <div className={`text-[12px] leading-4 mt-1 ${selectedPillar===p.key?"text-white":"text-ink-muted"}`}>{p.desc}</div>
+              <div className={`mono text-[10px] tracking-[0.08em] uppercase mt-3 px-2 py-1 rounded-full border inline-block ${selectedPillar===p.key?"border-white/30 text-white bg-white/10":"border-border bg-surface-2 text-ink-muted"}`}>Active</div>
             </button>
           ))}
         </div>
