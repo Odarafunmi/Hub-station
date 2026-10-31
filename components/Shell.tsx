@@ -85,68 +85,25 @@ export default function Shell({ children }: { children: React.ReactNode }){
     return t.status==="open" && t.dueAt && new Date(t.dueAt).toLocaleDateString("en-GB",{timeZone:"Africa/Lagos"}) === new Date().toLocaleDateString("en-GB",{timeZone:"Africa/Lagos"});
   }).length;
 
-  // Calendar header data for top teal band (shown on notes/todo pages, but we render a generic one here if pathname is notes/todo)
-  const isTealHeaderPage = pathname?.startsWith("/notes") || pathname?.startsWith("/todo");
-  const todayStr = new Date().toLocaleDateString("en-GB",{ timeZone:"Africa/Lagos", weekday:"long", day:"numeric", month:"long", year:"numeric" });
-
   return (
     <div className="app-frame flex min-h-screen">
       <SideRail pathname={pathname || ""} />
       <div className="flex-1 min-w-0 flex flex-col bg-bg">
-        {/* Top bar — on teal pages it's part of the teal header, otherwise a light bar */}
-        {isTealHeaderPage ? (
-          <div className="bg-teal text-on-teal rounded-b-[32px] mx-0 lg:mx-4 mt-0 overflow-hidden">
-            <div className="px-6 pt-6 pb-4 flex items-center gap-3">
-              <div className="flex-1">
-                <div className="text-[32px]/[40px] font-normal tracking-tight text-on-teal">Hub Station</div>
-                <div className="text-[12px] text-on-teal mt-1 capitalize" style={{ color:"var(--on-teal)" }}>{todayStr} · {mounted ? `${todayCount} tasks for today` : "—"} · Africa/Lagos</div>
-              </div>
-              <ThemeToggle />
-              <div className="hidden md:flex items-center gap-2 ml-2">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-on-teal" style={{ color:"var(--on-teal)" }} />
-                  <input value={search} onChange={e=> setSearch(e.target.value)} placeholder="Search…" className="h-9 pl-9 pr-3 rounded-full bg-white text-[14px] placeholder:text-ink-muted text-ink border border-line focus:outline-none focus:border-teal w-[200px]" />
-                </div>
-                <button onClick={()=>{ if("Notification" in window) Notification.requestPermission(); }} className="w-9 h-9 rounded-full bg-surface border border-line grid place-items-center text-ink"><Bell className="w-4 h-4"/></button>
-              </div>
-            </div>
-            {/* Week strip — simplified calendar */}
-            <div className="px-6 pb-5">
-              <div className="flex justify-between text-[12px] font-medium" style={{ color:"var(--on-teal)" }}>
-                {["M","T","W","T","F","S","S"].map(d=> <span key={d} className="w-10 text-center">{d}</span>)}
-              </div>
-              <div className="flex justify-between mt-2">
-                {Array.from({length:7}).map((_,i)=>{
-                  const d = new Date(); d.setDate(d.getDate()-3+i);
-                  const isSelected = i===3;
-                  const dayNum = new Intl.DateTimeFormat("en-GB",{ day:"numeric", timeZone:"Africa/Lagos"}).format(d);
-                  return (
-                    <div key={i} className="w-10 flex flex-col items-center gap-1">
-                      <div className={`w-10 h-10 rounded-full grid place-items-center text-[14px] font-medium ${isSelected ? "bg-surface text-teal shadow-focused" : "text-on-teal"}`}>{dayNum}</div>
-                      <div className="flex gap-1">{i%3===0 ? <span className="w-1 h-1 rounded-full bg-on-teal/80"/> : null}{i===1 ? <><span className="w-1 h-1 rounded-full bg-on-teal/80"/><span className="w-1 h-1 rounded-full bg-on-teal/50"/></> : null}</div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+        <header className="h-[56px] flex items-center gap-3 px-4 md:px-6 border-b border-line bg-surface/80 backdrop-blur sticky top-0 z-30">
+          <Link href="/notes" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full bg-ink text-surface grid place-items-center font-semibold text-[13px]">H</div>
+            <span className="font-normal text-[16px] hidden md:block text-ink">Hub Station</span>
+            <span className="text-[10px] tracking-widest uppercase text-ink-muted hidden md:block border border-line rounded-full px-2 py-0.5">Uneek · Lagos</span>
+          </Link>
+          <div className="flex-1 max-w-[420px] ml-2 md:ml-6 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
+            <input value={search} onChange={e=> setSearch(e.target.value)} placeholder="Search notes, todos, drafts…" className="w-full h-9 pl-9 pr-3 rounded-full border border-line bg-surface-flat text-[14px] placeholder:text-ink-muted text-ink focus:outline-none focus:border-ink/20" />
           </div>
-        ) : (
-          <header className="h-[56px] flex items-center gap-3 px-4 md:px-6 border-b border-line bg-surface/80 backdrop-blur sticky top-0 z-30">
-            <Link href="/notes" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-ink text-surface grid place-items-center font-semibold text-[13px]">H</div>
-              <span className="font-normal text-[16px] hidden md:block">Hub Station</span>
-              <span className="text-[10px] tracking-widest uppercase text-ink-muted hidden md:block border border-line rounded-full px-2 py-0.5">Uneek · Lagos</span>
-            </Link>
-            <div className="flex-1 max-w-[420px] ml-2 md:ml-6 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
-              <input value={search} onChange={e=> setSearch(e.target.value)} placeholder="Search notes, todos, drafts…" className="w-full h-9 pl-9 pr-3 rounded-full border border-line bg-surface-flat text-[14px] placeholder:text-ink-muted focus:outline-none focus:border-teal" />
-            </div>
-            <div className="ml-auto flex items-center gap-2">
-              <ThemeToggle />
-              <div className="w-8 h-8 rounded-full bg-teal text-on-teal grid place-items-center text-[11px] font-medium">U</div>
-            </div>
-          </header>
-        )}
+          <div className="ml-auto flex items-center gap-2">
+            <ThemeToggle />
+            <div className="w-8 h-8 rounded-full bg-teal text-on-teal grid place-items-center text-[11px] font-medium">U</div>
+          </div>
+        </header>
 
         <main className="flex-1 min-w-0 pb-24 lg:pb-6">
           <div className="px-4 md:px-6 py-6 md:py-8 max-w-[1200px] mx-auto w-full">
