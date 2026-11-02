@@ -334,12 +334,10 @@ export default function TodoPage(){
         <div className="fixed bottom-28 left-1/2 -translate-x-1/2 bg-ink text-surface rounded-full px-4 py-2 text-[13px] font-medium z-50">{todoToast}</div>
       )}
 
-      {/* Single FAB */}
-      <button onClick={()=> setShowAdd(true)} aria-label="Add Task" className="fixed z-30 w-14 h-14 rounded-full bg-coral text-on-coral grid place-items-center shadow-fab active:scale-[0.94] transition"
-        style={{ bottom: "calc(88px + env(safe-area-inset-bottom))", right: "16px" }}>
+      {/* Single FAB — responsive via CSS class (no inline <style> to avoid hydration mismatch) */}
+      <button onClick={()=> setShowAdd(true)} aria-label="Add Task" className="fab-add-task fixed z-30 w-14 h-14 rounded-full bg-coral text-on-coral grid place-items-center shadow-fab active:scale-[0.94] transition">
         <Plus className="w-6 h-6" strokeWidth={2.2} />
       </button>
-      <style>{`@media(min-width:1024px){ button[aria-label="Add Task"]{ bottom: 32px !important; right: 32px !important; } }`}</style>
     </div>
   );
 }

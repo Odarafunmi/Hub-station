@@ -89,7 +89,7 @@ export default function Shell({ children }: { children: React.ReactNode }){
     <div className="app-frame flex min-h-screen">
       <SideRail pathname={pathname || ""} />
       <div className="flex-1 min-w-0 flex flex-col bg-bg">
-        <header className="h-[56px] flex items-center gap-3 px-4 md:px-6 border-b border-line bg-surface/80 backdrop-blur sticky top-0 z-30">
+        <header className="h-[56px] flex items-center gap-3 px-4 md:px-6 border-b border-line bg-surface shadow-sm sticky top-0 z-30">
           <Link href="/notes" className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full bg-ink text-surface grid place-items-center font-semibold text-[13px]">H</div>
             <span className="font-normal text-[16px] hidden md:block text-ink">Hub Station</span>

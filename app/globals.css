@@ -126,3 +126,9 @@ body {
 @media (min-width: 1024px) {
   .app-frame { border-radius: 32px; overflow: hidden; margin: 24px auto; min-height: calc(100vh - 48px); box-shadow: 0 20px 60px rgba(22,32,46,0.12); }
 }
+
+/* FAB responsive positioning — avoids inline <style> hydration mismatch */
+.fab-add-task { bottom: calc(88px + env(safe-area-inset-bottom)); right: 16px; }
+@media (min-width: 1024px) {
+  .fab-add-task { bottom: 32px !important; right: 32px !important; }
+}
