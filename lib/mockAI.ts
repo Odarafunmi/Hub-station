@@ -26,12 +26,69 @@ const linkedinBodies = [
   "In class we studied anchoring — the first number frames every number after it. So I moved price to the end of the proposal and led with outcome. Same price, different reception.\n\nOrder is a design choice, even in documents.",
 ];
 
-export function mockLinkedInPost(profile: any, slot: any, noteText?: string){
+const humanBodiesByLength: Record<number, string[]> = {
+  50: [
+    "Last month a client went quiet after my quote. I re-read it — vague scope, no next step, price first. I rewrote one page: included / not included / next step. She replied in 20 minutes. Sometimes clarity is the kindest close.",
+    "I used to hide price at the bottom. Now I lead with outcome, then steps, then price. Same numbers, warmer reception. Order tells a story — make price the last line, not the first.",
+  ],
+  100: [
+    "Tuesday, 2:13pm. Quote sent. Wednesday, no reply. Old me would have discounted.\n\nInstead I opened the doc and asked: would a tired founder know what they're buying? They wouldn't.\n\nSo I rebuilt it: One page. What we’ll do (in your words). What we won’t. The one next step — a 15-minute review on Thursday. Price lives at the end, after value is felt.\n\nShe replied: 'This is clear. Let's do Thursday.' Lesson: people don’t ghost on price. They pause on confusion.",
+    "In my second year I learned anchoring — the first number you see frames all others. I was showing price before context, so price became the anchor.\n\nNow I walk clients through the story: their goal, how we’ll get there, what success looks like in 6 weeks. By the time we reach numbers, they’ve already pictured the result. Conversations got lighter. Revisions dropped. It wasn’t talent. It was sequence.",
+  ],
+  200: [
+    "I keep a sticky note from 2023: 'They didn’t say no. They didn’t understand.' It’s from the week I lost a project I really wanted.\n\nI’d sent a beautiful deck — moodboards, palette, type. The reply never came. A friend who’s a founder said: 'Uneek, I skimmed it at 10pm between school run and dinner. I couldn’t find what I’d get, or what to do next. I closed it.'\n\nThat stung, then it shaped me.\n\nNow every quote is a tiny story:\n\n→ Hook: Their exact words back to them — 'You want Lekki mothers to trust the brand before they taste it.'\n→ Middle: Three honest lines: Here’s what’s included (shoot, edit, rollout), what’s not (media buying), and the one next step (a 20-minute review Thursday 11am WAT). No catalogue of deliverables.\n→ Anchor: Price at the very end, after value has landed. Same price as before, different frame.\n\nLast month I quoted the same way and heard: 'This feels considered. When do we start?' Same work. Kinder container.\n\nIf your proposals end in quiet, check the three lines before price. Clarity is an act of respect — and respect converts. What’s one proposal you can re-order tonight?",
+  ],
+};
+
+// expand/trim to hit word target approximately
+function fitWords(text: string, target: number) {
+  const words = text.trim().split(/\s+/);
+  if (words.length <= target + 8) return text; // already within range
+  if (words.length > target) {
+    // trim but keep paragraph breaks
+    return words.slice(0, target).join(" ") + "…";
+  }
+  // if too short, pad with gentle closer
+  const pad = "\n\nP.S. Writing this at my desk in Lagos — 11am, kettle on. If this helped, save it for your next quote.";
+  return text + pad;
+}
+
+// Build LinkedIn post from *user's actual note text* — this is key for social formatting feature.
+// Even 2-3 lines should be turned into a platform story.
+export function formatNoteForSocial(noteText: string, platform: "linkedin" | "instagram", wordTarget: number = 100) {
+  const clean = (noteText || "").trim();
+  if (!clean) return "";
+  if (platform === "linkedin") {
+    // human story framing using user text, not just random
+    // Take first sentence as hook seed
+    const firstLine = clean.split("\n")[0].slice(0, 120);
+    const hook = `I wrote this to myself last night:\n\n“${firstLine}”`;
+    const story = humanBodiesByLength[wordTarget as any]?.[0] || humanBodiesByLength[100][0];
+    // weave user text in the middle
+    const body = `${hook}\n\n${clean}\n\nHere’s what I’m learning:\n\n${story}`;
+    return fitWords(body, wordTarget);
+  } else {
+    // instagram carousel caption style
+    const title = clean.split("\n")[0].slice(0, 56);
+    return `Slide 1 — ${title}\n\n${clean}\n\nSwipe for the 3 fixes →\n\n#BrandDesign #ClientExperience #UneekDesigns`;
+  }
+}
+
+export function mockLinkedInPost(profile: any, slot: any, noteText?: string, wordCount: number = 100){
+  // if noteText provided, prioritize it (social formatting feature)
+  if (noteText && noteText.trim().length > 10) {
+    const p1 = formatNoteForSocial(noteText, "linkedin", wordCount);
+    const p2 = p1 + "\n\n—\nBuilt with Hub Station. Voice → draft in under a minute.";
+    return [p1, p2];
+  }
   const hook = linkedinHooks[Math.floor(Math.random()*linkedinHooks.length)];
-  const body = linkedinBodies[Math.floor(Math.random()*linkedinBodies.length)];
+  // pick body matching length bucket
+  const bucket = wordCount <= 60 ? 50 : wordCount <= 130 ? 100 : 200;
+  const pool = humanBodiesByLength[bucket] || humanBodiesByLength[100];
+  const body = pool[Math.floor(Math.random()*pool.length)];
   const p1 = `${hook}\n\n${body}`;
   const p2 = `${hook.replace(":"," — a note to myself:")}\n\n${body}\n\nP.S. Building Hub Station to capture these daily — voice to draft in under a minute.`;
-  return [p1, p2];
+  return [fitWords(p1, wordCount), fitWords(p2, wordCount)];
 }
 
 export function mockBlogPost(noteText: string, titleHint?: string){

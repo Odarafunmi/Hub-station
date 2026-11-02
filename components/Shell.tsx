@@ -37,11 +37,11 @@ function ThemeToggle(){
 function BottomNav({ pathname }: { pathname:string }){
   return (
     <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 pointer-events-none" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
-      <div className="mx-3 mb-3 glass rounded-[28px] h-[64px] flex items-center justify-around px-2 pointer-events-auto border border-white/40" style={{ boxShadow: "0 8px 32px rgba(74,117,137,0.16)" }}>
-        {nav.slice(0,5).map(item=>{
+      <div className="mx-3 mb-3 glass rounded-[28px] h-[64px] flex items-center justify-between px-1.5 pointer-events-auto border border-white/40" style={{ boxShadow: "0 8px 32px rgba(74,117,137,0.16)" }}>
+        {nav.map(item=>{
           const active = pathname?.startsWith(item.href);
           return (
-            <Link key={item.href} href={item.href} className="flex flex-col items-center gap-1 px-3 py-1.5 rounded-full">
+            <Link key={item.href} href={item.href} className="flex flex-col items-center gap-1 px-2 py-1.5 rounded-full">
               <span className={`w-7 h-7 rounded-full grid place-items-center transition ${active ? "ring-1 ring-ink text-ink bg-surface shadow-sm" : "text-ink-muted hover:text-ink"}`} aria-label={item.label}>
                 <item.icon className="w-[18px] h-[18px]" />
               </span>
@@ -89,7 +89,7 @@ export default function Shell({ children }: { children: React.ReactNode }){
     <div className="app-frame flex min-h-screen">
       <SideRail pathname={pathname || ""} />
       <div className="flex-1 min-w-0 flex flex-col bg-bg">
-        <header className="h-[56px] flex items-center gap-3 px-4 md:px-6 border-b border-line bg-surface/80 backdrop-blur sticky top-0 z-30">
+        <header className="h-[56px] flex items-center gap-3 px-4 md:px-6 border-b border-line bg-surface shadow-sm sticky top-0 z-30">
           <Link href="/notes" className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full bg-ink text-surface grid place-items-center font-semibold text-[13px]">H</div>
             <span className="font-normal text-[16px] hidden md:block text-ink">Hub Station</span>

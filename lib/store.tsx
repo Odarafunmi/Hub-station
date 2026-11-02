@@ -79,7 +79,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }){
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [snippets, setSnippets] = useState<Snippet[]>([]);
   const [ideas, setIdeas] = useState<IdeaCard[]>([]);
-  const [privateProfile, setPrivateProfile] = useState<PrivateProfile>({ details:{ met:"", loves:"", dates:""}, pinHash:"1234"});
+  const [privateProfile, setPrivateProfile] = useState<PrivateProfile>({ details:{ met:"", loves:"", dates:""}, pinHash:""});
   const [privateMessages, setPrivateMessages] = useState<PrivateMessage[]>([]);
   const [search, setSearch] = useState("");
   const [hydrated, setHydrated] = useState(false);
